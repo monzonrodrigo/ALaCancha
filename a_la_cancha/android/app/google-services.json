@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "980067983543",
+    "project_id": "alacancha-96ac1",
+    "storage_bucket": "alacancha-96ac1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980067983543:android:aabdd0b78f2ea1fe0dad32",
+        "android_client_info": {
+          "package_name": "com.alacancha.a_la_cancha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980067983543-kf82avfagjji8fqj12r5tfsdc28cdu5k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH92wGnVdESANEIyWI7pBNE_Hn4Ntvxrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980067983543-kf82avfagjji8fqj12r5tfsdc28cdu5k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
