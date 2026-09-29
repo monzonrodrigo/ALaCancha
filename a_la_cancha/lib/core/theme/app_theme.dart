@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Paleta tomada directamente del diseno en Figma (verde cancha para las
-/// acciones principales, violeta para todo lo relacionado a "turno fijo").
+
 class AppColors {
   AppColors._();
   static const primario = Color(0xFF2F7A3D);

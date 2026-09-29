@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// RNF05: TODA accion critica/irreversible (cancelar turno, dar de baja
-/// turno fijo, eliminar cancha) debe pasar por este dialogo antes de
-/// ejecutarse. El boton de accion siempre nombra la accion especifica --
-/// nunca un generico "OK" -- y "Volver" es siempre el boton neutro.
-///
-/// Devuelve `true` si el usuario confirmo, `false` o `null` si volvio atras.
 Future<bool> mostrarDialogoConfirmacion(
   BuildContext context, {
   required String titulo,

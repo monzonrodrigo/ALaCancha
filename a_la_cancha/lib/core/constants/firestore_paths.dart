@@ -6,7 +6,5 @@ class FirestorePaths {
   static const String configuracion = 'configuracion';
   static const String turnos = 'turnos';
   static const String turnosFijos = 'turnosFijos';
-
-  /// El documento de configuracion es unico (singleton).
   static const String configuracionDocId = 'general';
 }
