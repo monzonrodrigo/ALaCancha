@@ -46,8 +46,9 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
     return SafeArea(
       child: cancha.when(
         data: (c) {
-          if (c == null)
+          if (c == null) {
             return const Center(child: Text('No se encontro la cancha.'));
+          }
           final precio = c.precioSegunHorario(esNocturno: widget.esNocturno);
 
           return ListView(
@@ -121,8 +122,9 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                                   creadoEn: DateTime.now(),
                                 ),
                               );
-                          if (context.mounted)
+                          if (context.mounted) {
                             context.go('/cliente/mis-turnos');
+                          }
                         } on TurnoNoDisponibleException catch (e) {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
