@@ -75,12 +75,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 24),
-                    const Icon(Icons.sports_soccer, size: 56, color: AppColors.primario),
+                    const Icon(Icons.sports_soccer,
+                        size: 56, color: AppColors.primario),
                     const SizedBox(height: 16),
                     const Text(
                       'Turnos F5',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
                     ),
                     const Text(
                       'Inicia sesion para reservar tu cancha',
@@ -95,7 +97,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: const Color(0xFFFEF2F2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text(_error!, style: const TextStyle(color: AppColors.peligro)),
+                        child: Text(_error!,
+                            style: const TextStyle(color: AppColors.peligro)),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -104,15 +107,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(labelText: 'Email'),
                       validator: (value) =>
-                          (value == null || !value.contains('@')) ? 'Ingresa un email valido' : null,
+                          (value == null || !value.contains('@'))
+                              ? 'Ingresa un email valido'
+                              : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Contrasena'),
-                      validator: (value) =>
-                          (value == null || value.length < 6) ? 'Minimo 6 caracteres' : null,
+                      decoration:
+                          const InputDecoration(labelText: 'Contrasena'),
+                      validator: (value) => (value == null || value.length < 6)
+                          ? 'Minimo 6 caracteres'
+                          : null,
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
@@ -120,16 +127,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ? null
                           : () {
                               if (!_formKey.currentState!.validate()) return;
-                              _iniciarSesion(() => authRepo.iniciarSesionConEmail(
-                                    email: _emailController.text.trim(),
-                                    password: _passwordController.text,
-                                  ));
+                              _iniciarSesion(
+                                  () => authRepo.iniciarSesionConEmail(
+                                        email: _emailController.text.trim(),
+                                        password: _passwordController.text,
+                                      ));
                             },
                       child: _cargando
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
                             )
                           : const Text('Ingresar'),
                     ),
@@ -138,25 +147,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Expanded(child: Divider()),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text('o continua con', style: TextStyle(color: AppColors.textoSecundario, fontSize: 12)),
+                        child: Text('o continua con',
+                            style: TextStyle(
+                                color: AppColors.textoSecundario,
+                                fontSize: 12)),
                       ),
                       Expanded(child: Divider()),
                     ]),
                     const SizedBox(height: 16),
                     OutlinedButton.icon(
-                      onPressed: _cargando ? null : () => _iniciarSesion(authRepo.iniciarSesionConGoogle),
+                      onPressed: _cargando
+                          ? null
+                          : () =>
+                              _iniciarSesion(authRepo.iniciarSesionConGoogle),
                       icon: const Icon(Icons.g_mobiledata, size: 26),
                       label: const Text('Continuar con Google'),
                     ),
                     const SizedBox(height: 10),
                     OutlinedButton.icon(
-                      onPressed: _cargando ? null : () => _iniciarSesion(authRepo.iniciarSesionConApple),
+                      onPressed: _cargando
+                          ? null
+                          : () =>
+                              _iniciarSesion(authRepo.iniciarSesionConApple),
                       icon: const Icon(Icons.apple, size: 22),
                       label: const Text('Continuar con Apple'),
                     ),
                     const SizedBox(height: 24),
                     TextButton(
-                      onPressed: _cargando ? null : () => context.push('/registro'),
+                      onPressed:
+                          _cargando ? null : () => context.push('/registro'),
                       child: const Text('No tenes cuenta? Registrate'),
                     ),
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/dialogo_confirmacion.dart';
 import '../../../providers/auth_providers.dart';
@@ -50,10 +51,7 @@ class DrawerAdmin extends ConsumerWidget {
                 ),
                 const Text(
                   'Administrador',
-                  style: TextStyle(
-                    color: Color(0xFFD7E8DB),
-                    fontSize: 12.5,
-                  ),
+                  style: TextStyle(color: Color(0xFFD7E8DB), fontSize: 12.5),
                 ),
               ],
             ),
@@ -91,10 +89,7 @@ class DrawerAdmin extends ConsumerWidget {
           ),
           const Divider(height: 24),
           ListTile(
-            leading: const Icon(
-              Icons.logout,
-              color: AppColors.peligro,
-            ),
+            leading: const Icon(Icons.logout, color: AppColors.peligro),
             title: const Text(
               'Cerrar sesion',
               style: TextStyle(
@@ -131,31 +126,22 @@ class DrawerAdmin extends ConsumerWidget {
     final activo = rutaActual == ruta;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 2,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: ListTile(
         leading: Icon(
           icono,
-          color: activo
-              ? AppColors.primarioOscuro
-              : AppColors.texto,
+          color: activo ? AppColors.primarioOscuro : AppColors.texto,
         ),
         title: Text(
           texto,
           style: TextStyle(
             fontWeight: FontWeight.w700,
-            color: activo
-                ? AppColors.primarioOscuro
-                : AppColors.texto,
+            color: activo ? AppColors.primarioOscuro : AppColors.texto,
           ),
         ),
         selected: activo,
         selectedTileColor: const Color(0xFFEAF3EC),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onTap: () {
           Navigator.of(context).pop();
 

@@ -14,9 +14,7 @@ final misTurnosFijosProvider = StreamProvider<List<TurnoFijo>>((ref) {
 });
 
 final turnosFijosVigentesProvider = StreamProvider<List<TurnoFijo>>((ref) {
-  return ref
-      .watch(turnosFijosRepositoryProvider)
-      .observarTodosVigentes();
+  return ref.watch(turnosFijosRepositoryProvider).observarTodosVigentes();
 });
 
 class TurnosFijosDeCanchaArgs {
@@ -41,9 +39,7 @@ class TurnosFijosDeCanchaArgs {
 final turnosFijosDeCanchaProvider =
     StreamProvider.family<List<TurnoFijo>, TurnosFijosDeCanchaArgs>(
   (ref, args) {
-    return ref
-        .watch(turnosFijosRepositoryProvider)
-        .observarTurnosFijosDeCancha(
+    return ref.watch(turnosFijosRepositoryProvider).observarTurnosFijosDeCancha(
           canchaId: args.canchaId,
           diaSemana: args.diaSemana,
         );
