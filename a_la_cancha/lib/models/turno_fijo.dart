@@ -22,6 +22,10 @@ class TurnoFijo {
   final EstadoTurnoFijo estado;
   final DateTime creadoEn;
   final DateTime? bajaEn;
+  final DateTime? actualizadoEn;
+  final bool eliminado;
+  final bool disponible;
+  final String status;
 
   const TurnoFijo({
     required this.id,
@@ -35,6 +39,10 @@ class TurnoFijo {
     required this.estado,
     required this.creadoEn,
     this.bajaEn,
+    this.actualizadoEn,
+    this.eliminado = false,
+    this.disponible = true,
+    this.status = 'activo',
   });
 
   int get horaFin => horaInicio + 1;
@@ -61,15 +69,20 @@ class TurnoFijo {
       diaSemana: (data['diaSemana'] as num).toInt(),
       horaInicio: (data['horaInicio'] as num).toInt(),
       precio: (data['precio'] as num?)?.toDouble() ?? 0,
-      estado: EstadoTurnoFijo.fromString(
-        (data['estado'] as String?) ?? 'vigente',
-      ),
+      estado:
+          EstadoTurnoFijo.fromString((data['estado'] as String?) ?? 'vigente'),
       creadoEn: data['creadoEn'] != null
           ? DateTime.parse(data['creadoEn'] as String)
           : DateTime.now(),
       bajaEn: data['bajaEn'] != null
           ? DateTime.parse(data['bajaEn'] as String)
           : null,
+      actualizadoEn: data['actualizadoEn'] != null
+          ? DateTime.tryParse(data['actualizadoEn'].toString())
+          : null,
+      eliminado: (data['eliminado'] as bool?) ?? false,
+      disponible: (data['disponible'] as bool?) ?? true,
+      status: (data['status'] as String?) ?? 'activo',
     );
   }
 
@@ -85,6 +98,10 @@ class TurnoFijo {
       'estado': estado.name,
       'creadoEn': creadoEn.toIso8601String(),
       'bajaEn': bajaEn?.toIso8601String(),
+      'actualizadoEn': DateTime.now().toIso8601String(),
+      'eliminado': eliminado,
+      'disponible': disponible,
+      'status': status,
     };
   }
 }
