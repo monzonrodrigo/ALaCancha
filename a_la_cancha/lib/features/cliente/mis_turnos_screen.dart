@@ -71,7 +71,8 @@ class _ListaProximos extends ConsumerWidget {
           _TurnoCard(
             titulo: DateFormat("EEEE d 'de' MMM", 'es').format(t.fecha),
             subtitulo:
-                '${t.horaInicio}:00 a ${t.horaFin}:00 · ${t.esNocturno ? 'Nocturno' : 'Diurno'}',
+                '${t.horaInicio}:00 a ${t.horaFin}:00 · ${t.esNocturno ? 'Nocturno' : 'Diurno'}'
+                '${t.codigoReserva.isNotEmpty ? ' · ${t.codigoReserva}' : ''}',
             equipo: t.equipo,
             esFijo: false,
             onAccion: () async {
