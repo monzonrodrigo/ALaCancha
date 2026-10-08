@@ -17,6 +17,10 @@ class Usuario {
   final RolUsuario rol;
   final String? telefono;
   final DateTime? creadoEn;
+  final DateTime? actualizadoEn;
+  final bool eliminado;
+  final bool disponible;
+  final String status;
   const Usuario({
     required this.uid,
     required this.nombre,
@@ -24,6 +28,10 @@ class Usuario {
     required this.rol,
     this.telefono,
     this.creadoEn,
+    this.actualizadoEn,
+    this.eliminado = false,
+    this.disponible = true,
+    this.status = 'activo',
   });
   bool get esAdministrador => rol == RolUsuario.administrador;
   factory Usuario.fromMap(String uid, Map<String, dynamic> data) {
@@ -36,6 +44,12 @@ class Usuario {
       creadoEn: data['creadoEn'] != null
           ? DateTime.tryParse(data['creadoEn'].toString())
           : null,
+      actualizadoEn: data['actualizadoEn'] != null
+          ? DateTime.tryParse(data['actualizadoEn'].toString())
+          : null,
+      eliminado: (data['eliminado'] as bool?) ?? false,
+      disponible: (data['disponible'] as bool?) ?? true,
+      status: (data['status'] as String?) ?? 'activo',
     );
   }
   Map<String, dynamic> toMap() {
@@ -45,6 +59,10 @@ class Usuario {
       'rol': rol.name,
       'telefono': telefono,
       'creadoEn': (creadoEn ?? DateTime.now()).toIso8601String(),
+      'actualizadoEn': DateTime.now().toIso8601String(),
+      'eliminado': eliminado,
+      'disponible': disponible,
+      'status': status,
     };
   }
 
@@ -53,14 +71,20 @@ class Usuario {
     String? email,
     RolUsuario? rol,
     String? telefono,
+    bool? eliminado,
+    bool? disponible,
+    String? status,
   }) {
     return Usuario(
-      uid: uid,
-      nombre: nombre ?? this.nombre,
-      email: email ?? this.email,
-      rol: rol ?? this.rol,
-      telefono: telefono ?? this.telefono,
-      creadoEn: creadoEn,
-    );
+        uid: uid,
+        nombre: nombre ?? this.nombre,
+        email: email ?? this.email,
+        rol: rol ?? this.rol,
+        telefono: telefono ?? this.telefono,
+        creadoEn: creadoEn,
+        actualizadoEn: actualizadoEn,
+        eliminado: eliminado ?? this.eliminado,
+        disponible: disponible ?? this.disponible,
+        status: status ?? this.status);
   }
 }
