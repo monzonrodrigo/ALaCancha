@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -22,29 +21,10 @@ class MisTurnosScreen extends ConsumerWidget {
         children: [
           Container(
             color: Colors.white,
-            child: Row(
-              children: [
-                const Expanded(
-                  child: TabBar(
-                    tabs: [Tab(text: 'Proximos'), Tab(text: 'Historial')],
-                    labelColor: AppColors.texto,
-                    indicatorColor: AppColors.primario,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: TextButton.icon(
-                    onPressed: () => context.go('/cliente/nuevo-turno-fijo'),
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.fijoFondo,
-                      foregroundColor: AppColors.fijoAccent,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-                    ),
-                    icon: const Icon(Icons.add, size: 16),
-                    label: const Text('Turno fijo', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
-                  ),
-                ),
-              ],
+            child: const TabBar(
+              tabs: [Tab(text: 'Proximos'), Tab(text: 'Historial')],
+              labelColor: AppColors.texto,
+              indicatorColor: AppColors.primario,
             ),
           ),
           const Expanded(
@@ -74,7 +54,8 @@ class _ListaProximos extends ConsumerWidget {
     }
 
     final proximos = (turnos.valueOrNull ?? [])
-        .where((t) => t.estado == EstadoTurno.confirmado && !t.fecha.isBefore(hoySinHora))
+        .where((t) =>
+            t.estado == EstadoTurno.confirmado && !t.fecha.isBefore(hoySinHora))
         .toList()
       ..sort((a, b) => a.fecha.compareTo(b.fecha));
     final fijos = turnosFijos.valueOrNull ?? [];
@@ -89,18 +70,25 @@ class _ListaProximos extends ConsumerWidget {
         for (final t in proximos)
           _TurnoCard(
             titulo: DateFormat("EEEE d 'de' MMM", 'es').format(t.fecha),
-            subtitulo: '${t.horaInicio}:00 a ${t.horaFin}:00 · ${t.esNocturno ? 'Nocturno' : 'Diurno'}',
+            subtitulo:
+                '${t.horaInicio}:00 a ${t.horaFin}:00 · ${t.esNocturno ? 'Nocturno' : 'Diurno'}'
+                '${t.codigoReserva.isNotEmpty ? ' · ${t.codigoReserva}' : ''}',
             equipo: t.equipo,
             esFijo: false,
             onAccion: () async {
-              final minAnticipacion = configuracion?.minutosMinimoCancelacion ?? 180;
-              final horaTurno = DateTime(t.fecha.year, t.fecha.month, t.fecha.day, t.horaInicio);
-              final quedaTiempo = horaTurno.difference(DateTime.now()).inMinutes >= minAnticipacion;
+              final minAnticipacion =
+                  configuracion?.minutosMinimoCancelacion ?? 180;
+              final horaTurno = DateTime(
+                  t.fecha.year, t.fecha.month, t.fecha.day, t.horaInicio);
+              final quedaTiempo =
+                  horaTurno.difference(DateTime.now()).inMinutes >=
+                      minAnticipacion;
 
               final confirmar = await mostrarDialogoConfirmacion(
                 context,
                 titulo: 'Cancelar turno?',
-                mensaje: 'Vas a cancelar el turno del ${DateFormat("EEEE d 'de' MMM", 'es').format(t.fecha)} de ${t.horaInicio}:00 a ${t.horaFin}:00.',
+                mensaje:
+                    'Vas a cancelar el turno del ${DateFormat("EEEE d 'de' MMM", 'es').format(t.fecha)} de ${t.horaInicio}:00 a ${t.horaFin}:00.',
                 textoBotonConfirmar: 'Cancelar turno',
                 avisoNeutral: quedaTiempo
                     ? 'El horario queda libre para otras reservas.'
@@ -121,9 +109,11 @@ class _ListaProximos extends ConsumerWidget {
               final confirmar = await mostrarDialogoConfirmacion(
                 context,
                 titulo: 'Dar de baja este turno fijo?',
-                mensaje: 'Vas a dar de baja tu turno fijo de los ${f.nombreDia.toLowerCase()} de ${f.horaInicio}:00 a ${f.horaFin}:00.',
+                mensaje:
+                    'Vas a dar de baja tu turno fijo de los ${f.nombreDia.toLowerCase()} de ${f.horaInicio}:00 a ${f.horaFin}:00.',
                 textoBotonConfirmar: 'Dar de baja turno fijo',
-                avisoNeutral: 'El horario queda liberado para otros clientes a partir de la proxima semana.',
+                avisoNeutral:
+                    'El horario queda liberado para otros clientes a partir de la proxima semana.',
               );
               if (confirmar) {
                 await ref.read(turnosFijosRepositoryProvider).darDeBaja(f.id);
@@ -147,12 +137,15 @@ class _ListaHistorial extends ConsumerWidget {
     return turnos.when(
       data: (lista) {
         final historial = lista
-            .where((t) => t.estado == EstadoTurno.cancelado || t.fecha.isBefore(hoySinHora))
+            .where((t) =>
+                t.estado == EstadoTurno.cancelado ||
+                t.fecha.isBefore(hoySinHora))
             .toList()
           ..sort((a, b) => b.fecha.compareTo(a.fecha));
 
         if (historial.isEmpty) {
-          return const Center(child: Text('Todavia no tenes turnos en el historial.'));
+          return const Center(
+              child: Text('Todavia no tenes turnos en el historial.'));
         }
 
         return ListView.builder(
@@ -165,14 +158,16 @@ class _ListaHistorial extends ConsumerWidget {
               subtitulo: '${t.horaInicio}:00 a ${t.horaFin}:00',
               equipo: t.equipo,
               esFijo: false,
-              estadoTexto: t.estado == EstadoTurno.cancelado ? 'Cancelado' : 'Jugado',
+              estadoTexto:
+                  t.estado == EstadoTurno.cancelado ? 'Cancelado' : 'Jugado',
               onAccion: null,
             );
           },
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('No se pudo cargar el historial: $e')),
+      error: (e, _) =>
+          Center(child: Text('No se pudo cargar el historial: $e')),
     );
   }
 }
@@ -213,40 +208,62 @@ class _TurnoCard extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    Flexible(child: Text(titulo, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5))),
+                    Flexible(
+                        child: Text(titulo,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w800, fontSize: 14.5))),
                     if (esFijo) ...[
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(color: AppColors.fijoFondo, borderRadius: BorderRadius.circular(6)),
-                        child: const Text('FIJO', style: TextStyle(color: AppColors.fijoAccent, fontSize: 10.5, fontWeight: FontWeight.w700)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                            color: AppColors.fijoFondo,
+                            borderRadius: BorderRadius.circular(6)),
+                        child: const Text('FIJO',
+                            style: TextStyle(
+                                color: AppColors.fijoAccent,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ],
                 ),
               ),
-              _Badge(texto: estadoTexto ?? 'Confirmado', color: estadoTexto == 'Cancelado' ? AppColors.peligro : AppColors.primario),
+              _Badge(
+                  texto: estadoTexto ?? 'Confirmado',
+                  color: estadoTexto == 'Cancelado'
+                      ? AppColors.peligro
+                      : AppColors.primario),
             ],
           ),
           const SizedBox(height: 4),
-          Text(subtitulo, style: const TextStyle(fontSize: 12.5, color: AppColors.textoSecundario)),
+          Text(subtitulo,
+              style: const TextStyle(
+                  fontSize: 12.5, color: AppColors.textoSecundario)),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.people_outline, size: 14, color: AppColors.textoSecundario),
+                  const Icon(Icons.people_outline,
+                      size: 14, color: AppColors.textoSecundario),
                   const SizedBox(width: 6),
-                  Text(equipo ?? 'Sin equipo cargado', style: const TextStyle(fontSize: 12, color: AppColors.textoSecundario)),
+                  Text(equipo ?? 'Sin equipo cargado',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textoSecundario)),
                 ],
               ),
               if (onAccion != null)
                 TextButton.icon(
                   onPressed: onAccion,
-                  style: TextButton.styleFrom(foregroundColor: AppColors.peligro),
+                  style:
+                      TextButton.styleFrom(foregroundColor: AppColors.peligro),
                   icon: const Icon(Icons.close, size: 15),
-                  label: Text(esFijo ? 'Dar de baja' : 'Cancelar', style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+                  label: Text(esFijo ? 'Dar de baja' : 'Cancelar',
+                      style: const TextStyle(
+                          fontSize: 12.5, fontWeight: FontWeight.w700)),
                 ),
             ],
           ),
@@ -265,8 +282,12 @@ class _Badge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(999)),
-      child: Text(texto, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
+      decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(999)),
+      child: Text(texto,
+          style: TextStyle(
+              color: color, fontSize: 11, fontWeight: FontWeight.w700)),
     );
   }
 }
