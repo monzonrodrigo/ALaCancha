@@ -30,7 +30,7 @@ class CanchasAdminScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 90),
             itemCount: lista.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, i) {
               final cancha = lista[i];
               return Container(
@@ -248,7 +248,11 @@ class _FormularioCanchaState extends ConsumerState<_FormularioCancha> {
                     (s) => DropdownMenuItem(value: s, child: Text(s.etiqueta)),
                   )
                   .toList(),
-              onChanged: (s) => setState(() => _superficie = s ?? _superficie),
+              onChanged: (s) {
+                if (s != null) {
+                  setState(() => _superficie = s);
+                }
+              },
             ),
             const SizedBox(height: 12),
             Row(
@@ -266,4 +270,67 @@ class _FormularioCanchaState extends ConsumerState<_FormularioCancha> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded
+                Expanded(
+                  child: TextFormField(
+                    controller: _precioNocturnoController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Precio nocturno',
+                    ),
+                    validator: (v) => (double.tryParse(v ?? '') == null)
+                        ? 'Numero invalido'
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Activa (visible para clientes)'),
+              value: _activa,
+              onChanged: (v) => setState(() => _activa = v),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: _guardando
+                  ? null
+                  : () async {
+                      if (!_formKey.currentState!.validate()) return;
+                      setState(() => _guardando = true);
+                      final repo = ref.read(canchasRepositoryProvider);
+                      final datos = Cancha(
+                        id: widget.cancha?.id ?? '',
+                        nombre: _nombreController.text.trim(),
+                        superficie: _superficie,
+                        precioDiurno: double.parse(
+                          _precioDiurnoController.text,
+                        ),
+                        precioNocturno: double.parse(
+                          _precioNocturnoController.text,
+                        ),
+                        activa: _activa,
+                      );
+                      if (esNueva) {
+                        await repo.crearCanchaNueva(datos);
+                      } else {
+                        await repo.actualizarCancha(datos);
+                      }
+                      if (context.mounted) Navigator.of(context).pop();
+                    },
+              child: _guardando
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(esNueva ? 'Crear cancha' : 'Guardar cambios'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
