@@ -30,7 +30,7 @@ class CanchasAdminScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 90),
             itemCount: lista.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, i) {
               final cancha = lista[i];
               return Container(
@@ -89,6 +89,39 @@ class CanchasAdminScreen extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
+                      icon: Icon(
+                        cancha.activa ? Icons.toggle_on : Icons.toggle_off,
+                        color: cancha.activa
+                            ? AppColors.primario
+                            : AppColors.textoSecundario,
+                        size: 28,
+                      ),
+                      tooltip: cancha.activa
+                          ? 'Deshabilitar cancha'
+                          : 'Habilitar cancha',
+                      onPressed: () async {
+                        final confirmar = await mostrarDialogoConfirmacion(
+                          context,
+                          titulo: cancha.activa
+                              ? 'Deshabilitar cancha?'
+                              : 'Habilitar cancha?',
+                          mensaje: cancha.activa
+                              ? 'La cancha "${cancha.nombre}" va a dejar de aparecer para los clientes. Los turnos ya reservados no se cancelan.'
+                              : 'La cancha "${cancha.nombre}" vuelve a estar disponible para los clientes.',
+                          textoBotonConfirmar:
+                              cancha.activa ? 'Deshabilitar' : 'Habilitar',
+                        );
+                        if (confirmar) {
+                          await ref
+                              .read(canchasRepositoryProvider)
+                              .establecerDisponibilidad(
+                                cancha.id,
+                                habilitada: !cancha.activa,
+                              );
+                        }
+                      },
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.edit_outlined),
                       onPressed: () => _abrirFormulario(context, ref, cancha),
                     ),
@@ -104,7 +137,8 @@ class CanchasAdminScreen extends ConsumerWidget {
                           mensaje:
                               'Vas a eliminar "${cancha.nombre}" de forma permanente. Esta accion no se puede deshacer.',
                           textoBotonConfirmar: 'Eliminar cancha',
-                          avisoNeutral: 'Los turnos ya reservados en esta cancha no se eliminan automaticamente.',
+                          avisoNeutral:
+                              'Los turnos ya reservados en esta cancha no se eliminan automaticamente.',
                         );
                         if (confirmar) {
                           await ref
@@ -207,7 +241,7 @@ class _FormularioCanchaState extends ConsumerState<_FormularioCancha> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<Superficie>(
-              initialValue: _superficie,
+              value: _superficie,
               decoration: const InputDecoration(labelText: 'Superficie'),
               items: Superficie.values
                   .map(
@@ -232,67 +266,4 @@ class _FormularioCanchaState extends ConsumerState<_FormularioCancha> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _precioNocturnoController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Precio nocturno',
-                    ),
-                    validator: (v) => (double.tryParse(v ?? '') == null)
-                        ? 'Numero invalido'
-                        : null,
-                  ),
-                ),
-              ],
-            ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Activa (visible para clientes)'),
-              value: _activa,
-              onChanged: (v) => setState(() => _activa = v),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _guardando
-                  ? null
-                  : () async {
-                      if (!_formKey.currentState!.validate()) return;
-                      setState(() => _guardando = true);
-                      final repo = ref.read(canchasRepositoryProvider);
-                      final datos = Cancha(
-                        id: widget.cancha?.id ?? '',
-                        nombre: _nombreController.text.trim(),
-                        superficie: _superficie,
-                        precioDiurno: double.parse(
-                          _precioDiurnoController.text,
-                        ),
-                        precioNocturno: double.parse(
-                          _precioNocturnoController.text,
-                        ),
-                        activa: _activa,
-                      );
-                      if (esNueva) {
-                        await repo.crearCanchaNueva(datos);
-                      } else {
-                        await repo.actualizarCancha(datos);
-                      }
-                      if (context.mounted) Navigator.of(context).pop();
-                    },
-              child: _guardando
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(esNueva ? 'Crear cancha' : 'Guardar cambios'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+                Expanded

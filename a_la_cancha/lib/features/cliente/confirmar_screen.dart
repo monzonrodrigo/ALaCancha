@@ -105,7 +105,9 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                     : () async {
                         setState(() => _cargando = true);
                         try {
-                          await ref.read(turnosRepositoryProvider).crearTurno(
+                          final turnoCreado = await ref
+                              .read(turnosRepositoryProvider)
+                              .crearTurno(
                                 Turno(
                                   id: '',
                                   canchaId: c.id,
@@ -123,6 +125,13 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                                 ),
                               );
                           if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Turno confirmado. Codigo de reserva: ${turnoCreado.codigoReserva}'),
+                                duration: const Duration(seconds: 5),
+                              ),
+                            );
                             context.go('/cliente/mis-turnos');
                           }
                         } on TurnoNoDisponibleException catch (e) {
