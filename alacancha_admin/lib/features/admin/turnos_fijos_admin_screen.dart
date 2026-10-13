@@ -35,32 +35,62 @@ class TurnosFijosAdminScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(f.equipo ?? f.clienteNombre, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5)),
+                        Text(
+                          f.equipo ?? f.clienteNombre,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14.5,
+                          ),
+                        ),
                         const SizedBox(height: 3),
                         Text(
                           '${f.nombreDia} · ${f.horaInicio}:00 a ${f.horaFin}:00',
-                          style: const TextStyle(fontSize: 12.5, color: AppColors.textoSecundario),
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: AppColors.textoSecundario,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                    decoration: BoxDecoration(color: const Color(0xFFEAF3EC), borderRadius: BorderRadius.circular(999)),
-                    child: const Text('Vigente', style: TextStyle(color: Color(0xFF235C2F), fontSize: 11, fontWeight: FontWeight.w700)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEAF3EC),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: const Text(
+                      'Vigente',
+                      style: TextStyle(
+                        color: Color(0xFF235C2F),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: AppColors.peligro),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: AppColors.peligro,
+                    ),
                     onPressed: () async {
                       final confirmar = await mostrarDialogoConfirmacion(
                         context,
                         titulo: 'Dar de baja este turno fijo?',
-                        mensaje: 'Vas a dar de baja el turno fijo de ${f.equipo ?? f.clienteNombre}, los ${f.nombreDia.toLowerCase()} de ${f.horaInicio}:00 a ${f.horaFin}:00.',
+                        mensaje:
+                            'Vas a dar de baja el turno fijo de ${f.equipo ?? f.clienteNombre}, los ${f.nombreDia.toLowerCase()} de ${f.horaInicio}:00 a ${f.horaFin}:00.',
                         textoBotonConfirmar: 'Dar de baja turno fijo',
-                        avisoNeutral: 'El horario queda liberado para otros clientes a partir de la proxima semana. El cliente va a ser notificado.',
+                        avisoNeutral:
+                            'El horario queda liberado para otros clientes a partir de la proxima semana. El cliente va a ser notificado.',
                       );
+
                       if (confirmar) {
-                        await ref.read(turnosFijosRepositoryProvider).darDeBaja(f.id);
+                        await ref
+                            .read(turnosFijosRepositoryProvider)
+                            .darDeBaja(f.id);
                       }
                     },
                   ),
@@ -71,7 +101,10 @@ class TurnosFijosAdminScreen extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('No se pudieron cargar los turnos fijos: $e')),
+      error:
+          (e, _) => Center(
+            child: Text('No se pudieron cargar los turnos fijos: $e'),
+          ),
     );
   }
 }
