@@ -27,6 +27,11 @@ class _GrillaScreenState extends ConsumerState<GrillaScreen> {
     _fecha = DateTime(ahora.year, ahora.month, ahora.day);
   }
 
+  DateTime get _hoy {
+    final a = DateTime.now();
+    return DateTime(a.year, a.month, a.day);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cancha = ref.watch(canchaPorIdProvider(widget.canchaId));
@@ -62,8 +67,10 @@ class _GrillaScreenState extends ConsumerState<GrillaScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.chevron_left),
-                    onPressed: () => setState(() =>
-                        _fecha = _fecha.subtract(const Duration(days: 1))),
+                    onPressed: _fecha.isAfter(_hoy)
+                        ? () => setState(() =>
+                            _fecha = _fecha.subtract(const Duration(days: 1)))
+                        : null,
                   ),
                   Text(
                     DateFormat("EEEE d 'de' MMMM", 'es').format(_fecha),
@@ -90,17 +97,23 @@ class _GrillaScreenState extends ConsumerState<GrillaScreen> {
                   childAspectRatio: 1.5,
                 ),
                 itemCount: lista.length,
-                itemBuilder: (context, i) => _BloqueHorario(
-                  slot: lista[i],
-                  onTap: lista[i].disponible
-                      ? () => context.push('/cliente/confirmar', extra: {
-                            'canchaId': widget.canchaId,
-                            'fecha': _fecha,
-                            'hora': lista[i].hora,
-                            'esNocturno': lista[i].esNocturno,
-                          })
-                      : null,
-                ),
+                itemBuilder: (context, i) {
+                  final slot = lista[i];
+                  final esHoy = _fecha.isAtSameMomentAs(_hoy);
+                  final yaPaso = esHoy && slot.hora <= DateTime.now().hour;
+                  return _BloqueHorario(
+                    slot: slot,
+                    yaPaso: yaPaso,
+                    onTap: (slot.disponible && !yaPaso)
+                        ? () => context.push('/cliente/confirmar', extra: {
+                              'canchaId': widget.canchaId,
+                              'fecha': _fecha,
+                              'hora': slot.hora,
+                              'esNocturno': slot.esNocturno,
+                            })
+                        : null,
+                  );
+                },
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) =>
@@ -114,37 +127,54 @@ class _GrillaScreenState extends ConsumerState<GrillaScreen> {
 }
 
 class _BloqueHorario extends StatelessWidget {
-  const _BloqueHorario({required this.slot, required this.onTap});
+  const _BloqueHorario({
+    required this.slot,
+    required this.onTap,
+    this.yaPaso = false,
+  });
   final SlotGrilla slot;
   final VoidCallback? onTap;
+  final bool yaPaso;
 
   @override
   Widget build(BuildContext context) {
-    late final Color fondo;
-    late final Color texto;
-    late final String etiqueta;
+    late Color fondo;
+    late Color texto;
+    late Color borde;
+    late String etiqueta;
 
     switch (slot.estado) {
       case EstadoSlot.libre:
-        fondo = AppColors.fondo;
-        texto = const Color(0xFFD4D4D8);
+        fondo = Colors.white;
+        texto = AppColors.primario;
+        borde = AppColors.primario;
         etiqueta = 'Libre';
         break;
       case EstadoSlot.ocupadoPuntual:
-        fondo = const Color(0xFFEAF3EC);
-        texto = const Color(0xFF235C2F);
+        fondo = const Color(0xFFFFF4E5);
+        texto = const Color(0xFFB45309);
+        borde = const Color(0xFFF5D9AE);
         etiqueta = slot.etiqueta ?? 'Ocupado';
         break;
       case EstadoSlot.ocupadoFijo:
         fondo = AppColors.fijoFondo;
         texto = AppColors.fijoAccent;
+        borde = AppColors.fijoAccent;
         etiqueta = '${slot.etiqueta ?? 'Fijo'} · FIJO';
         break;
       case EstadoSlot.bloqueado:
-        fondo = const Color(0xFFF4F4F5);
-        texto = const Color(0xFF71717A);
+        fondo = const Color(0xFFE4E4E7);
+        texto = const Color(0xFF52525B);
+        borde = const Color(0xFFD4D4D8);
         etiqueta = slot.etiqueta ?? 'Bloqueado';
         break;
+    }
+
+    if (yaPaso) {
+      fondo = const Color(0xFFFAFAFA);
+      texto = const Color(0xFFC7C7CC);
+      borde = const Color(0xFFEFEFF1);
+      etiqueta = 'Pasado';
     }
 
     return InkWell(
@@ -154,9 +184,7 @@ class _BloqueHorario extends StatelessWidget {
         decoration: BoxDecoration(
           color: fondo,
           borderRadius: BorderRadius.circular(10),
-          border: slot.estado == EstadoSlot.libre
-              ? Border.all(color: AppColors.borde, style: BorderStyle.solid)
-              : null,
+          border: Border.all(color: borde),
         ),
         padding: const EdgeInsets.all(4),
         alignment: Alignment.center,
