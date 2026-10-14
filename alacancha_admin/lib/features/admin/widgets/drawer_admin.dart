@@ -98,17 +98,17 @@ class DrawerAdmin extends ConsumerWidget {
               ),
             ),
             onTap: () async {
-              Navigator.of(context).pop();
-
+              final authRepo = ref.read(authRepositoryProvider);
+              final navigator = Navigator.of(context);
               final confirmar = await mostrarDialogoConfirmacion(
                 context,
                 titulo: 'Cerrar sesion?',
                 mensaje: 'Vas a salir de tu cuenta de administrador.',
                 textoBotonConfirmar: 'Cerrar sesion',
               );
-
+              navigator.pop();
               if (confirmar) {
-                await ref.read(authRepositoryProvider).cerrarSesion();
+                await authRepo.cerrarSesion();
               }
             },
           ),
