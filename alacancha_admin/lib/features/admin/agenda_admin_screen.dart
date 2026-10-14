@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/dialogo_confirmacion.dart';
 import '../../models/cancha.dart';
@@ -35,7 +36,9 @@ class _AgendaAdminScreenState extends ConsumerState<AgendaAdminScreen> {
       child: canchas.when(
         data: (lista) {
           if (lista.isEmpty) {
-            return const Center(child: Text('Todavia no hay canchas cargadas.'));
+            return const Center(
+              child: Text('Todavia no hay canchas cargadas.'),
+            );
           }
           _canchaSeleccionada ??= lista.first;
           return Column(
@@ -47,8 +50,10 @@ class _AgendaAdminScreenState extends ConsumerState<AgendaAdminScreen> {
                       ? _canchaSeleccionada
                       : lista.first,
                   items: lista
-                      .map((c) =>
-                          DropdownMenuItem(value: c, child: Text(c.nombre)))
+                      .map(
+                        (c) =>
+                            DropdownMenuItem(value: c, child: Text(c.nombre)),
+                      )
                       .toList(),
                   onChanged: (c) => setState(() => _canchaSeleccionada = c),
                 ),
@@ -56,8 +61,10 @@ class _AgendaAdminScreenState extends ConsumerState<AgendaAdminScreen> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: AppColors.borde),
@@ -68,17 +75,23 @@ class _AgendaAdminScreenState extends ConsumerState<AgendaAdminScreen> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.chevron_left),
-                        onPressed: () => setState(() =>
-                            _fecha = _fecha.subtract(const Duration(days: 1))),
+                        onPressed: () => setState(
+                          () =>
+                              _fecha = _fecha.subtract(const Duration(days: 1)),
+                        ),
                       ),
                       Text(
-                          DateFormat("EEEE d 'de' MMMM", 'es').format(_fecha),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w800, fontSize: 13.5)),
+                        DateFormat("EEEE d 'de' MMMM", 'es').format(_fecha),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13.5,
+                        ),
+                      ),
                       IconButton(
                         icon: const Icon(Icons.chevron_right),
-                        onPressed: () => setState(() =>
-                            _fecha = _fecha.add(const Duration(days: 1))),
+                        onPressed: () => setState(
+                          () => _fecha = _fecha.add(const Duration(days: 1)),
+                        ),
                       ),
                     ],
                   ),
@@ -87,34 +100,39 @@ class _AgendaAdminScreenState extends ConsumerState<AgendaAdminScreen> {
               Expanded(
                 child: Consumer(
                   builder: (context, ref, _) {
-                    final slots = ref.watch(grillaProvider(TurnosDelDiaArgs(
-                        canchaId: _canchaSeleccionada!.id, fecha: _fecha)));
+                    final slots = ref.watch(
+                      grillaProvider(
+                        TurnosDelDiaArgs(
+                          canchaId: _canchaSeleccionada!.id,
+                          fecha: _fecha,
+                        ),
+                      ),
+                    );
                     return slots.when(
                       data: (lista) => GridView.builder(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          childAspectRatio: 1.5,
-                        ),
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              childAspectRatio: 1.5,
+                            ),
                         itemCount: lista.length,
                         itemBuilder: (context, i) => _BloqueAdmin(
                           slot: lista[i],
-                          onCancelar: lista[i].estado ==
-                                  EstadoSlot.ocupadoPuntual
+                          onCancelar:
+                              lista[i].estado == EstadoSlot.ocupadoPuntual
                               ? () async {
                                   final confirmar =
                                       await mostrarDialogoConfirmacion(
-                                    context,
-                                    titulo: 'Cancelar turno?',
-                                    mensaje:
-                                        'Vas a cancelar el turno de ${lista[i].etiqueta ?? 'este cliente'} en ${_canchaSeleccionada!.nombre}, ${DateFormat("EEEE d 'de' MMMM", 'es').format(_fecha)} de ${lista[i].hora}:00 a ${lista[i].hora + 1}:00.',
-                                    textoBotonConfirmar: 'Cancelar turno',
-                                    avisoNeutral:
-                                        'El cliente va a ser notificado y el horario queda libre para otras reservas.',
-                                  );
+                                        context,
+                                        titulo: 'Cancelar turno?',
+                                        mensaje:
+                                            'Vas a cancelar el turno de ${lista[i].etiqueta ?? 'este cliente'} en ${_canchaSeleccionada!.nombre}, ${DateFormat("EEEE d 'de' MMMM", 'es').format(_fecha)} de ${lista[i].hora}:00 a ${lista[i].hora + 1}:00.',
+                                        textoBotonConfirmar: 'Cancelar turno',
+                                        avisoNeutral: 'El cliente va a ser notificado y el horario queda libre para otras reservas.',
+                                      );
                                   if (confirmar &&
                                       lista[i].referenciaId != null) {
                                     await ref
@@ -128,7 +146,8 @@ class _AgendaAdminScreenState extends ConsumerState<AgendaAdminScreen> {
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
                       error: (e, _) => Center(
-                          child: Text('No se pudo cargar la agenda: $e')),
+                        child: Text('No se pudo cargar la agenda: $e'),
+                      ),
                     );
                   },
                 ),
@@ -153,26 +172,32 @@ class _BloqueAdmin extends StatelessWidget {
   Widget build(BuildContext context) {
     late final Color fondo;
     late final Color texto;
+    late final Color borde;
     late final String etiqueta;
+
     switch (slot.estado) {
       case EstadoSlot.libre:
-        fondo = AppColors.fondo;
-        texto = const Color(0xFFD4D4D8);
+        fondo = Colors.white;
+        texto = AppColors.primario;
+        borde = AppColors.primario;
         etiqueta = 'Libre';
         break;
       case EstadoSlot.ocupadoPuntual:
-        fondo = const Color(0xFFEAF3EC);
-        texto = const Color(0xFF235C2F);
+        fondo = const Color(0xFFFFF4E5);
+        texto = const Color(0xFFB45309);
+        borde = const Color(0xFFF5D9AE);
         etiqueta = slot.etiqueta ?? 'Ocupado';
         break;
       case EstadoSlot.ocupadoFijo:
         fondo = AppColors.fijoFondo;
         texto = AppColors.fijoAccent;
+        borde = AppColors.fijoAccent;
         etiqueta = '${slot.etiqueta ?? 'Fijo'} · FIJO';
         break;
       case EstadoSlot.bloqueado:
-        fondo = const Color(0xFFF4F4F5);
-        texto = const Color(0xFF71717A);
+        fondo = const Color(0xFFE4E4E7);
+        texto = const Color(0xFF52525B);
+        borde = const Color(0xFFD4D4D8);
         etiqueta = slot.etiqueta ?? 'Bloqueado';
         break;
     }
@@ -181,20 +206,30 @@ class _BloqueAdmin extends StatelessWidget {
       onTap: onCancelar,
       child: Container(
         decoration: BoxDecoration(
-            color: fondo, borderRadius: BorderRadius.circular(10)),
+          color: fondo,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: borde),
+        ),
         padding: const EdgeInsets.all(4),
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${slot.hora}:00',
-                style: TextStyle(
-                    fontWeight: FontWeight.w800, fontSize: 11, color: texto)),
-            Text(etiqueta,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 9, color: texto)),
+            Text(
+              '${slot.hora}:00',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 11,
+                color: texto,
+              ),
+            ),
+            Text(
+              etiqueta,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 9, color: texto),
+            ),
           ],
         ),
       ),
