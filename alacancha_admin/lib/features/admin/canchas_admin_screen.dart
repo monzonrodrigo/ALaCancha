@@ -108,8 +108,9 @@ class CanchasAdminScreen extends ConsumerWidget {
                           mensaje: cancha.activa
                               ? 'La cancha "${cancha.nombre}" va a dejar de aparecer para los clientes. Los turnos ya reservados no se cancelan.'
                               : 'La cancha "${cancha.nombre}" vuelve a estar disponible para los clientes.',
-                          textoBotonConfirmar:
-                              cancha.activa ? 'Deshabilitar' : 'Habilitar',
+                          textoBotonConfirmar: cancha.activa
+                              ? 'Deshabilitar'
+                              : 'Habilitar',
                         );
                         if (confirmar) {
                           await ref
@@ -137,8 +138,7 @@ class CanchasAdminScreen extends ConsumerWidget {
                           mensaje:
                               'Vas a eliminar "${cancha.nombre}" de forma permanente. Esta accion no se puede deshacer.',
                           textoBotonConfirmar: 'Eliminar cancha',
-                          avisoNeutral:
-                              'Los turnos ya reservados en esta cancha no se eliminan automaticamente.',
+                          avisoNeutral: 'Los turnos ya reservados en esta cancha no se eliminan automaticamente.',
                         );
                         if (confirmar) {
                           await ref
@@ -241,7 +241,7 @@ class _FormularioCanchaState extends ConsumerState<_FormularioCancha> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<Superficie>(
-              value: _superficie,
+              initialValue: _superficie,
               decoration: const InputDecoration(labelText: 'Superficie'),
               items: Superficie.values
                   .map(

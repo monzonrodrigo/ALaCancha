@@ -43,4 +43,13 @@ class CanchasRepository {
   Future<void> eliminarCancha(String id) {
     return _ref.doc(id).delete();
   }
+
+  Future<void> establecerDisponibilidad(String id, {required bool habilitada}) {
+    return _ref.doc(id).update({
+      'activa': habilitada,
+      'disponible': habilitada,
+      'status': habilitada ? 'activo' : 'inactivo',
+      'actualizadoEn': DateTime.now().toIso8601String(),
+    });
+  }
 }

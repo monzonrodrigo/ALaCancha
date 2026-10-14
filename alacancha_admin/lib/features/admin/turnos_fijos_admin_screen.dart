@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/dialogo_confirmacion.dart';
 import '../../providers/repository_providers.dart';
@@ -19,7 +20,7 @@ class TurnosFijosAdminScreen extends ConsumerWidget {
         return ListView.separated(
           padding: const EdgeInsets.all(20),
           itemCount: lista.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
             final f = lista[i];
             return Container(
@@ -83,8 +84,7 @@ class TurnosFijosAdminScreen extends ConsumerWidget {
                         mensaje:
                             'Vas a dar de baja el turno fijo de ${f.equipo ?? f.clienteNombre}, los ${f.nombreDia.toLowerCase()} de ${f.horaInicio}:00 a ${f.horaFin}:00.',
                         textoBotonConfirmar: 'Dar de baja turno fijo',
-                        avisoNeutral:
-                            'El horario queda liberado para otros clientes a partir de la proxima semana. El cliente va a ser notificado.',
+                        avisoNeutral: 'El horario queda liberado para otros clientes a partir de la proxima semana. El cliente va a ser notificado.',
                       );
 
                       if (confirmar) {
@@ -101,10 +101,8 @@ class TurnosFijosAdminScreen extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error:
-          (e, _) => Center(
-            child: Text('No se pudieron cargar los turnos fijos: $e'),
-          ),
+      error: (e, _) =>
+          Center(child: Text('No se pudieron cargar los turnos fijos: $e')),
     );
   }
 }
