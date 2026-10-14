@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../providers/repository_providers.dart';
@@ -153,11 +152,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: _cargando ? null : () => _iniciarSesion(authRepo.iniciarSesionConApple),
                       icon: const Icon(Icons.apple, size: 22),
                       label: const Text('Continuar con Apple'),
-                    ),
-                    const SizedBox(height: 24),
-                    TextButton(
-                      onPressed: _cargando ? null : () => context.push('/registro'),
-                      child: const Text('No tenes cuenta? Registrate'),
                     ),
                   ],
                 ),
