@@ -23,6 +23,11 @@ class Turno {
   final double precio;
   final EstadoTurno estado;
   final DateTime creadoEn;
+  final String codigoReserva;
+  final DateTime? actualizadoEn;
+  final bool eliminado;
+  final bool disponible;
+  final String status;
 
   const Turno({
     required this.id,
@@ -36,6 +41,11 @@ class Turno {
     required this.precio,
     required this.estado,
     required this.creadoEn,
+    this.codigoReserva = '',
+    this.actualizadoEn,
+    this.eliminado = false,
+    this.disponible = true,
+    this.status = 'activo',
   });
 
   int get horaFin => horaInicio + 1;
@@ -51,12 +61,18 @@ class Turno {
       horaInicio: (data['horaInicio'] as num).toInt(),
       esNocturno: (data['esNocturno'] as bool?) ?? false,
       precio: (data['precio'] as num?)?.toDouble() ?? 0,
-      estado: EstadoTurno.fromString(
-        (data['estado'] as String?) ?? 'pendiente',
-      ),
+      estado:
+          EstadoTurno.fromString((data['estado'] as String?) ?? 'pendiente'),
       creadoEn: data['creadoEn'] != null
           ? DateTime.parse(data['creadoEn'] as String)
           : DateTime.now(),
+      codigoReserva: (data['codigoReserva'] as String?) ?? '',
+      actualizadoEn: data['actualizadoEn'] != null
+          ? DateTime.tryParse(data['actualizadoEn'].toString())
+          : null,
+      eliminado: (data['eliminado'] as bool?) ?? false,
+      disponible: (data['disponible'] as bool?) ?? true,
+      status: (data['status'] as String?) ?? 'activo',
     );
   }
 
@@ -66,16 +82,17 @@ class Turno {
       'clienteId': clienteId,
       'clienteNombre': clienteNombre,
       'equipo': equipo,
-      'fecha': DateTime(
-        fecha.year,
-        fecha.month,
-        fecha.day,
-      ).toIso8601String(),
+      'fecha': DateTime(fecha.year, fecha.month, fecha.day).toIso8601String(),
       'horaInicio': horaInicio,
       'esNocturno': esNocturno,
       'precio': precio,
       'estado': estado.name,
       'creadoEn': creadoEn.toIso8601String(),
+      'codigoReserva': codigoReserva,
+      'actualizadoEn': DateTime.now().toIso8601String(),
+      'eliminado': eliminado,
+      'disponible': disponible,
+      'status': status,
     };
   }
 }
