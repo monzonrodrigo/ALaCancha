@@ -4,6 +4,8 @@ class Configuracion {
   final int horaInicioNocturno;
   final int horaAperturaPredio;
   final int horaCierrePredio;
+  final int partidosPorCupon;
+  final double porcentajeDescuentoCupon;
   final DateTime? creadoEn;
   final DateTime? actualizadoEn;
   final bool eliminado;
@@ -16,6 +18,8 @@ class Configuracion {
     this.horaInicioNocturno = 18,
     this.horaAperturaPredio = 9,
     this.horaCierrePredio = 24,
+    this.partidosPorCupon = 5,
+    this.porcentajeDescuentoCupon = 20.0,
     this.creadoEn,
     this.actualizadoEn,
     this.eliminado = false,
@@ -33,6 +37,8 @@ class Configuracion {
       horaInicioNocturno: (data['horaInicioNocturno'] as num?)?.toInt() ?? 18,
       horaAperturaPredio: (data['horaAperturaPredio'] as num?)?.toInt() ?? 9,
       horaCierrePredio: (data['horaCierrePredio'] as num?)?.toInt() ?? 24,
+      partidosPorCupon: (data['partidosPorCupon'] as num?)?.toInt() ?? 5,
+      porcentajeDescuentoCupon: (data['porcentajeDescuentoCupon'] as num?)?.toDouble() ?? 20.0,
       creadoEn: data['creadoEn'] != null
           ? DateTime.tryParse(data['creadoEn'].toString())
           : null,
@@ -52,6 +58,8 @@ class Configuracion {
       'horaInicioNocturno': horaInicioNocturno,
       'horaAperturaPredio': horaAperturaPredio,
       'horaCierrePredio': horaCierrePredio,
+      'partidosPorCupon': partidosPorCupon,
+      'porcentajeDescuentoCupon': porcentajeDescuentoCupon,
       'creadoEn': (creadoEn ?? DateTime.now()).toIso8601String(),
       'actualizadoEn': DateTime.now().toIso8601String(),
       'eliminado': eliminado,
@@ -66,6 +74,8 @@ class Configuracion {
     int? horaInicioNocturno,
     int? horaAperturaPredio,
     int? horaCierrePredio,
+    int? partidosPorCupon,
+    double? porcentajeDescuentoCupon,
   }) {
     return Configuracion(
       minutosMinimoCancelacion:
@@ -74,6 +84,8 @@ class Configuracion {
       horaInicioNocturno: horaInicioNocturno ?? this.horaInicioNocturno,
       horaAperturaPredio: horaAperturaPredio ?? this.horaAperturaPredio,
       horaCierrePredio: horaCierrePredio ?? this.horaCierrePredio,
+      partidosPorCupon: partidosPorCupon ?? this.partidosPorCupon,
+      porcentajeDescuentoCupon: porcentajeDescuentoCupon ?? this.porcentajeDescuentoCupon,
       creadoEn: creadoEn,
       actualizadoEn: actualizadoEn,
       eliminado: eliminado,
