@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
+import '../../providers/configuracion_providers.dart';
+import '../../providers/cupones_providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/cancha.dart';
 import '../../models/turno.dart';
@@ -64,6 +65,8 @@ class HomeScreen extends ConsumerWidget {
           _BannerTurnoFijo(
             onTap: () => context.go('/cliente/nuevo-turno-fijo'),
           ),
+          const SizedBox(height: 16),
+          const _BannerCupones(),
           const SizedBox(height: 20),
           const Text(
             'Canchas del predio',
@@ -236,6 +239,123 @@ class _CardCancha extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _BannerCupones extends ConsumerWidget {
+  const _BannerCupones();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(sincronizarCuponesProvider);
+
+    final config = ref.watch(configuracionProvider).valueOrNull;
+    if (config == null || config.partidosPorCupon <= 0) {
+      return const SizedBox.shrink();
+    }
+
+    final jugados = ref.watch(partidosJugadosProvider);
+    final disponibles = ref.watch(misCuponesDisponiblesProvider);
+    final meta = config.partidosPorCupon;
+    final enCurso = jugados % meta;
+    final faltan = meta - enCurso;
+    final descuento = config.porcentajeDescuentoCupon.toStringAsFixed(0);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8E8),
+        border: Border.all(color: const Color(0xFFF0D9A8)),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.local_activity_outlined,
+                size: 18,
+                color: Color(0xFFB45309),
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Cupones',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13.5,
+                  color: Color(0xFFB45309),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '$jugados ${jugados == 1 ? 'partido' : 'partidos'}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFFB45309),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: enCurso / meta,
+              minHeight: 7,
+              backgroundColor: const Color(0xFFF0E2C4),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFFD97706),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            disponibles.isEmpty
+                ? 'Te faltan $faltan '
+                    '${faltan == 1 ? 'partido' : 'partidos'} '
+                    'para tu proximo cupon de $descuento% off.'
+                : 'Tenes ${disponibles.length} '
+                    '${disponibles.length == 1 ? 'cupon' : 'cupones'} '
+                    'disponibles. Se aplica al confirmar un turno.',
+            style: const TextStyle(
+              fontSize: 12.5,
+              color: Color(0xFF8A5B12),
+            ),
+          ),
+          if (disponibles.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final c in disponibles)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: const Color(0xFFD97706)),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      '${c.codigo}  ·  ${c.porcentaje.toStringAsFixed(0)}% off',
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFB45309),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }
