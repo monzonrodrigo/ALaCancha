@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/cupones_admin_screen.dart';
 import '../../features/acceso/login_screen.dart';
 import '../../features/acceso/sin_permiso_screen.dart';
 import '../../features/acceso/splash_screen.dart';
@@ -82,6 +83,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin/perfil',
             builder: (context, state) => const PerfilScreen(),
+          ),
+          GoRoute(
+            path: '/admin/cupones',
+            builder: (context, state) => const CuponesAdminScreen(),
           ),
         ],
       ),
