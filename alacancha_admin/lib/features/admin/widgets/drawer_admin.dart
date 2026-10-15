@@ -77,6 +77,12 @@ class DrawerAdmin extends ConsumerWidget {
           ),
           _item(
             context,
+            icono: Icons.local_activity_outlined,
+            texto: 'Cupones',
+            ruta: '/admin/cupones',
+          ),
+          _item(
+            context,
             icono: Icons.settings_outlined,
             texto: 'Configuracion',
             ruta: '/admin/configuracion',

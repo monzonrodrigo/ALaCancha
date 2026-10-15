@@ -19,6 +19,8 @@ class _ConfiguracionAdminScreenState
   final _horaNocturnoController = TextEditingController();
   final _horaAperturaController = TextEditingController();
   final _horaCierreController = TextEditingController();
+  final _partidosCuponController = TextEditingController();
+  final _porcentajeCuponController = TextEditingController();
   bool _cargado = false;
   bool _guardando = false;
 
@@ -29,6 +31,8 @@ class _ConfiguracionAdminScreenState
     _horaNocturnoController.text = c.horaInicioNocturno.toString();
     _horaAperturaController.text = c.horaAperturaPredio.toString();
     _horaCierreController.text = c.horaCierrePredio.toString();
+    _partidosCuponController.text = c.partidosPorCupon.toString();
+    _porcentajeCuponController.text = c.porcentajeDescuentoCupon.toStringAsFixed(0);
     _cargado = true;
   }
 
@@ -39,6 +43,8 @@ class _ConfiguracionAdminScreenState
     _horaNocturnoController.dispose();
     _horaAperturaController.dispose();
     _horaCierreController.dispose();
+    _partidosCuponController.dispose();
+    _porcentajeCuponController.dispose();
     super.dispose();
   }
 
@@ -81,51 +87,65 @@ class _ConfiguracionAdminScreenState
                 ),
               ],
             ),
+            _campo(
+              _partidosCuponController,
+              'Partidos necesarios para un cupon',
+            ),
+            _campo(
+              _porcentajeCuponController,
+              'Descuento del cupon (%)',
+            ),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed:
                   _guardando
                       ? null
                       : () async {
-                        setState(() => _guardando = true);
-                        await ref
-                            .read(configuracionRepositoryProvider)
-                            .actualizarConfiguracion(
-                              Configuracion(
-                                minutosMinimoCancelacion:
-                                    int.tryParse(_minutosController.text) ??
-                                    c.minutosMinimoCancelacion,
-                                porcentajeSena:
-                                    double.tryParse(_senaController.text) ??
-                                    c.porcentajeSena,
-                                horaInicioNocturno:
-                                    int.tryParse(_horaNocturnoController.text) ??
-                                    c.horaInicioNocturno,
-                                horaAperturaPredio:
-                                    int.tryParse(_horaAperturaController.text) ??
-                                    c.horaAperturaPredio,
-                                horaCierrePredio:
-                                    int.tryParse(_horaCierreController.text) ??
-                                    c.horaCierrePredio,
-                              ),
+                          setState(() => _guardando = true);
+                          await ref
+                              .read(configuracionRepositoryProvider)
+                              .actualizarConfiguracion(
+                                Configuracion(
+                                  minutosMinimoCancelacion:
+                                      int.tryParse(_minutosController.text) ??
+                                      c.minutosMinimoCancelacion,
+                                  porcentajeSena:
+                                      double.tryParse(_senaController.text) ??
+                                      c.porcentajeSena,
+                                  horaInicioNocturno:
+                                      int.tryParse(_horaNocturnoController.text) ??
+                                      c.horaInicioNocturno,
+                                  horaAperturaPredio:
+                                      int.tryParse(_horaAperturaController.text) ??
+                                      c.horaAperturaPredio,
+                                  horaCierrePredio:
+                                      int.tryParse(_horaCierreController.text) ??
+                                      c.horaCierrePredio,
+                                  partidosPorCupon:
+                                      int.tryParse(_partidosCuponController.text) ??
+                                      c.partidosPorCupon,
+                                  porcentajeDescuentoCupon:
+                                      double.tryParse(_porcentajeCuponController.text) ??
+                                      c.porcentajeDescuentoCupon,
+                                ),
+                              );
+                          if (mounted) {
+                            setState(() => _guardando = false);
+                            scaffoldMessenger.showSnackBar(
+                              const SnackBar(content: Text('Configuracion guardada.')),
                             );
-                       if (mounted) {
-                          setState(() => _guardando = false);
-                          scaffoldMessenger.showSnackBar(
-                            const SnackBar(content: Text('Configuracion guardada.')),
-                          );
-                        }
-                      },
+                          }
+                        },
               child:
                   _guardando
                       ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Text('Guardar cambios'),
             ),
           ],
