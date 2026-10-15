@@ -15,6 +15,7 @@ class AdminShell extends StatelessWidget {
     '/admin/agenda': 'Agenda',
     '/admin/canchas': 'Canchas',
     '/admin/turnos-fijos': 'Turnos Fijos',
+    '/admin/cupones': 'Cupones',
     '/admin/configuracion': 'Configuracion',
     '/admin/perfil': 'Perfil',
   };
