@@ -8,6 +8,7 @@ import '../../data/turnos_repository.dart';
 import '../../models/turno.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/canchas_providers.dart';
+import '../../providers/cupones_providers.dart';
 import '../../providers/repository_providers.dart';
 
 class ConfirmarScreen extends ConsumerStatefulWidget {
@@ -31,6 +32,7 @@ class ConfirmarScreen extends ConsumerStatefulWidget {
 class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
   final _equipoController = TextEditingController();
   bool _cargando = false;
+  bool _usarCupon = false;
 
   @override
   void dispose() {
@@ -42,6 +44,7 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
   Widget build(BuildContext context) {
     final cancha = ref.watch(canchaPorIdProvider(widget.canchaId));
     final usuario = ref.watch(usuarioActualProvider).valueOrNull;
+    final cuponesDisponibles = ref.watch(misCuponesDisponiblesProvider);
 
     return SafeArea(
       child: cancha.when(
@@ -50,6 +53,10 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
             return const Center(child: Text('No se encontro la cancha.'));
           }
           final precio = c.precioSegunHorario(esNocturno: widget.esNocturno);
+          final cupon = (_usarCupon && cuponesDisponibles.isNotEmpty)
+              ? cuponesDisponibles.first
+              : null;
+          final precioFinal = cupon == null ? precio : cupon.aplicarA(precio);
 
           return ListView(
             padding: const EdgeInsets.all(20),
@@ -64,28 +71,53 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(c.nombre,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w800, fontSize: 17)),
+                    Text(
+                      c.nombre,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 17,
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     _fila(
-                        Icons.calendar_today,
-                        DateFormat("EEEE d 'de' MMMM", 'es')
-                            .format(widget.fecha)),
-                    _fila(Icons.schedule,
-                        '${widget.hora}:00 a ${widget.hora + 1}:00 · ${widget.esNocturno ? 'Nocturno' : 'Diurno'}'),
+                      Icons.calendar_today,
+                      DateFormat("EEEE d 'de' MMMM", 'es').format(widget.fecha),
+                    ),
+                    _fila(
+                      Icons.schedule,
+                      '${widget.hora}:00 a ${widget.hora + 1}:00 · '
+                      '${widget.esNocturno ? 'Nocturno' : 'Diurno'}',
+                    ),
                     const Divider(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total',
-                            style: TextStyle(fontWeight: FontWeight.w700)),
-                        Text(
-                          '\$${precio.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18,
-                              color: AppColors.primario),
+                        const Text(
+                          'Total',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        Row(
+                          children: [
+                            if (cupon != null) ...[
+                              Text(
+                                '\$${precio.toStringAsFixed(0)}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textoSecundario,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                            Text(
+                              '\$${precioFinal.toStringAsFixed(0)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 18,
+                                color: AppColors.primario,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -96,8 +128,30 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
               TextField(
                 controller: _equipoController,
                 decoration: const InputDecoration(
-                    labelText: 'Nombre del equipo (opcional)'),
+                  labelText: 'Nombre del equipo (opcional)',
+                ),
               ),
+              if (cuponesDisponibles.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    'Usar cupon de '
+                    '${cuponesDisponibles.first.porcentaje.toStringAsFixed(0)}'
+                    '% off',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  subtitle: Text(
+                    cuponesDisponibles.first.codigo,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textoSecundario,
+                    ),
+                  ),
+                  value: _usarCupon,
+                  onChanged: (v) => setState(() => _usarCupon = v),
+                ),
+              ],
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _cargando || usuario == null
@@ -119,16 +173,25 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                                   fecha: widget.fecha,
                                   horaInicio: widget.hora,
                                   esNocturno: widget.esNocturno,
-                                  precio: precio,
+                                  precio: precioFinal,
                                   estado: EstadoTurno.confirmado,
                                   creadoEn: DateTime.now(),
                                 ),
                               );
+
+                          if (cupon != null) {
+                            await ref
+                                .read(cuponesRepositoryProvider)
+                                .marcarComoUsado(cupon.id, turnoCreado.id);
+                          }
+
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                    'Turno confirmado. Codigo de reserva: ${turnoCreado.codigoReserva}'),
+                                  'Turno confirmado. Codigo de reserva: '
+                                  '${turnoCreado.codigoReserva}',
+                                ),
                                 duration: const Duration(seconds: 5),
                               ),
                             );
@@ -137,14 +200,18 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                         } on TurnoNoDisponibleException catch (e) {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.mensaje)));
+                              SnackBar(content: Text(e.mensaje)),
+                            );
                             context.pop();
                           }
                         } catch (e) {
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
                                 content:
-                                    Text('No se pudo confirmar el turno: $e')));
+                                    Text('No se pudo confirmar el turno: $e'),
+                              ),
+                            );
                           }
                         } finally {
                           if (mounted) setState(() => _cargando = false);
@@ -155,7 +222,9 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Text('Confirmar turno'),
               ),
@@ -175,9 +244,13 @@ class _ConfirmarScreenState extends ConsumerState<ConfirmarScreen> {
         children: [
           Icon(icono, size: 16, color: AppColors.textoSecundario),
           const SizedBox(width: 8),
-          Text(texto,
-              style: const TextStyle(
-                  color: AppColors.textoSecundario, fontSize: 13)),
+          Text(
+            texto,
+            style: const TextStyle(
+              color: AppColors.textoSecundario,
+              fontSize: 13,
+            ),
+          ),
         ],
       ),
     );
