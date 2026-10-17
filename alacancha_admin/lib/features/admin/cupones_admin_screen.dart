@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../models/cupon.dart';
 import '../../providers/cupones_providers.dart';
@@ -15,12 +16,14 @@ class CuponesAdminScreen extends ConsumerWidget {
     return cupones.when(
       data: (lista) {
         if (lista.isEmpty) {
-          return const Center(child: Text('Todavia no se genero ningun cupon.'));
+          return const Center(
+            child: Text('Todavia no se genero ningun cupon.'),
+          );
         }
         return ListView.separated(
           padding: const EdgeInsets.all(20),
           itemCount: lista.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
             final c = lista[i];
             return Container(
@@ -39,21 +42,25 @@ class CuponesAdminScreen extends ConsumerWidget {
                         Text(
                           c.codigo,
                           style: const TextStyle(
-                              fontWeight: FontWeight.w800, fontSize: 14.5),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14.5,
+                          ),
                         ),
                         const SizedBox(height: 3),
                         Text(
                           '${c.porcentaje.toStringAsFixed(0)}% off a los ${c.partidosAcumulados} partidos',
                           style: const TextStyle(
-                              fontSize: 12.5,
-                              color: AppColors.textoSecundario),
+                            fontSize: 12.5,
+                            color: AppColors.textoSecundario,
+                          ),
                         ),
                         const SizedBox(height: 3),
                         Text(
                           'Generado el ${DateFormat("d 'de' MMMM", 'es').format(c.creadoEn)}',
                           style: const TextStyle(
-                              fontSize: 11.5,
-                              color: AppColors.textoSecundario),
+                            fontSize: 11.5,
+                            color: AppColors.textoSecundario,
+                          ),
                         ),
                       ],
                     ),
@@ -109,9 +116,11 @@ class EstadoCuponBadge extends StatelessWidget {
       child: Text(
         etiqueta,
         style: TextStyle(
-            color: texto, fontSize: 11, fontWeight: FontWeight.w700),
+          color: texto,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
 }
-```[cite: 17, 18]
