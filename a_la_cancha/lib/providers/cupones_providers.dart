@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/cupon.dart';
@@ -43,9 +42,18 @@ final sincronizarCuponesProvider = FutureProvider<void>((ref) async {
   final jugados = ref.watch(partidosJugadosProvider);
   if (jugados < config.partidosPorCupon) return;
   await ref.read(cuponesRepositoryProvider).sincronizarCupones(
-         clienteId: usuario.uid,
-         partidosJugados: jugados,
-         partidosPorCupon: config.partidosPorCupon,
-         porcentaje: config.porcentajeDescuentoCupon,
+        clienteId: usuario.uid,
+        partidosJugados: jugados,
+        partidosPorCupon: config.partidosPorCupon,
+        porcentaje: config.porcentajeDescuentoCupon,
       );
+});
+
+final cuponUsadoEnTurnoProvider =
+    Provider.family<Cupon?, String>((ref, turnoId) {
+  final cupones = ref.watch(misCuponesProvider).valueOrNull ?? const <Cupon>[];
+  for (final c in cupones) {
+    if (c.turnoId == turnoId) return c;
+  }
+  return null;
 });

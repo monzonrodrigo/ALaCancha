@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../providers/configuracion_providers.dart';
-import '../../providers/cupones_providers.dart';
+
 import '../../core/theme/app_theme.dart';
 import '../../models/cancha.dart';
 import '../../models/turno.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/canchas_providers.dart';
+import '../../providers/configuracion_providers.dart';
+import '../../providers/cupones_providers.dart';
 import '../../providers/turnos_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -148,10 +149,38 @@ class _CardProximoTurno extends StatelessWidget {
               const Icon(Icons.calendar_today, size: 15, color: Colors.white),
               const SizedBox(width: 8),
               Text(
-                '$fechaFormateada · ${turno.horaInicio}:00 a ${turno.horaFin}:00',
+                '$fechaFormateada · ${turno.horaInicio}:00 a '
+                '${turno.horaFin}:00',
                 style: const TextStyle(color: Colors.white),
               ),
             ],
+          ),
+          Consumer(
+            builder: (context, ref, _) {
+              final cupon = ref.watch(cuponUsadoEnTurnoProvider(turno.id));
+              if (cupon == null) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.local_activity_outlined,
+                      size: 15,
+                      color: Colors.white70,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Cupon ${cupon.codigo} aplicado '
+                      '(${cupon.porcentaje.toStringAsFixed(0)}% Off)',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -292,7 +321,7 @@ class _BannerCupones extends ConsumerWidget {
               ),
               const Spacer(),
               Text(
-                '$jugados ${jugados == 1 ? 'partido' : 'partidos'}',
+                '$enCurso de $meta',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Color(0xFFB45309),
