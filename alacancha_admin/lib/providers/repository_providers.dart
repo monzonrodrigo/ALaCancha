@@ -6,6 +6,7 @@ import '../data/disponibilidad_repository.dart';
 import '../data/turnos_fijos_repository.dart';
 import '../data/turnos_repository.dart';
 import '../data/usuarios_repository.dart';
+import '../data/cupones_repository.dart';
 
 final authRepositoryProvider =
     Provider<AuthRepository>((ref) => AuthRepository());
@@ -21,3 +22,5 @@ final turnosFijosRepositoryProvider =
     Provider<TurnosFijosRepository>((ref) => TurnosFijosRepository());
 final disponibilidadRepositoryProvider =
     Provider<DisponibilidadRepository>((ref) => DisponibilidadRepository());
+final cuponesRepositoryProvider =
+    Provider<CuponesRepository>((ref) => CuponesRepository());

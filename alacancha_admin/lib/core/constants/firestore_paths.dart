@@ -5,6 +5,7 @@ class FirestorePaths {
   static const String disponibilidad = 'disponibilidad';
   static const String configuracion = 'configuracion';
   static const String turnos = 'turnos';
-  static const String turnosFijos = 'turnosFijos';
+  static const String turnosFijos = 'turnosFijos'; 
+  static const String cupones = 'cupones';
   static const String configuracionDocId = 'general';
 }
