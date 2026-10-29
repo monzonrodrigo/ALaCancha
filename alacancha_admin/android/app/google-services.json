@@ -14,6 +14,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "980067983543-7n1dmqjh1b3dbs9va3qdkhj8p0j2n5rt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alacancha.a_la_cancha",
+            "certificate_hash": "d74a87c46a2633c7d553f81cbd1fbb15ac7123d2"
+          }
+        },
+        {
+          "client_id": "980067983543-k2e7l6hnmfd1oh8oi731n41vuhcsv03m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alacancha.a_la_cancha",
+            "certificate_hash": "99455dc853238e6d7e8611c6ba031d98baaceb0b"
+          }
+        },
+        {
+          "client_id": "980067983543-vd3br0gmescuqc2nmsn3oa6thab9ff5p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alacancha.a_la_cancha",
+            "certificate_hash": "e06b94955f59eeb011c9bebe18d789343235051b"
+          }
+        },
+        {
           "client_id": "980067983543-kf82avfagjji8fqj12r5tfsdc28cdu5k.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +53,13 @@
             {
               "client_id": "980067983543-kf82avfagjji8fqj12r5tfsdc28cdu5k.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "980067983543-ea2m1gsc53m48uda6c8qnp82pea7psbt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.alacanchaAdmin"
+              }
             }
           ]
         }
@@ -43,6 +74,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "980067983543-m7rvlqad21snubcepjn9hn6adiuli2v7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alacancha_admin",
+            "certificate_hash": "d74a87c46a2633c7d553f81cbd1fbb15ac7123d2"
+          }
+        },
+        {
+          "client_id": "980067983543-ndeop0djp7vjt24u0spkkc4ur4r5vej8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alacancha_admin",
+            "certificate_hash": "e06b94955f59eeb011c9bebe18d789343235051b"
+          }
+        },
+        {
+          "client_id": "980067983543-p9obfr9fccvon2r36g7hd75tmgc3d1dk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alacancha_admin",
+            "certificate_hash": "99455dc853238e6d7e8611c6ba031d98baaceb0b"
+          }
+        },
+        {
           "client_id": "980067983543-kf82avfagjji8fqj12r5tfsdc28cdu5k.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -58,6 +113,13 @@
             {
               "client_id": "980067983543-kf82avfagjji8fqj12r5tfsdc28cdu5k.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "980067983543-ea2m1gsc53m48uda6c8qnp82pea7psbt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.alacanchaAdmin"
+              }
             }
           ]
         }
