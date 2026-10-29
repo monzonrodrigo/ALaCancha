@@ -36,6 +36,8 @@ class TurnosDelDiaArgs {
 
 final turnosDelDiaProvider =
     StreamProvider.family<List<Turno>, TurnosDelDiaArgs>((ref, args) {
+  final sesion = ref.watch(authStateProvider).valueOrNull;
+  if (sesion == null) return Stream.value(const []);
   return ref.watch(turnosRepositoryProvider).observarTurnosDelDia(
         canchaId: args.canchaId,
         fecha: args.fecha,

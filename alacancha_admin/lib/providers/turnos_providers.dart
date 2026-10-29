@@ -31,15 +31,14 @@ class TurnosDelDiaArgs {
       other.fecha.day == fecha.day;
 
   @override
-  int get hashCode =>
-      Object.hash(canchaId, fecha.year, fecha.month, fecha.day);
+  int get hashCode => Object.hash(canchaId, fecha.year, fecha.month, fecha.day);
 }
 
 final turnosDelDiaProvider =
     StreamProvider.family<List<Turno>, TurnosDelDiaArgs>((ref, args) {
-  return ref
-      .watch(turnosRepositoryProvider)
-      .observarTurnosDelDia(
+  final sesion = ref.watch(authStateProvider).valueOrNull;
+  if (sesion == null) return Stream.value(const []);
+  return ref.watch(turnosRepositoryProvider).observarTurnosDelDia(
         canchaId: args.canchaId,
         fecha: args.fecha,
       );
